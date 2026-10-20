@@ -1,18 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+
+<html lang="en"> <head> 
+    <meta charset="UTF-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Venue Ticketing</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <header>
-        <h1>Interactive Venue Ticketing</h1>
-    </header>
-    <main>
-        <p>Venue layout and data model setup.</p>
-    </main>
-    <script src="app.js" defer></script>
-</body>
+    <title>Interactive Venue Ticketing</title> 
+    <link rel="stylesheet" href="styles.css"> 
+    <script src="app.js" defer></script> 
+</head> 
+    <body> 
+        <header> 
+            <h1>ADA University Cafeteria</h1> 
+            <p>Interactive Table Selection</p>
+        </header>
+
+<main>
+    <section id="venue-section">
+        <h2>Cafeteria Layout</h2>
+
+        <div id="navigation-controls">
+            <button id="zoom-in">Zoom In</button>
+            <button id="zoom-out">Zoom Out</button>
+            <button id="move-up">Move Up</button>
+            <button id="move-down">Move Down</button>
+            <button id="move-left">Move Left</button>
+            <button id="move-right">Move Right</button>
+            <button id="reset-view">Reset/Center View</button>
+        </div>
+
+        <div id="venue-map">
+            <!-- JavaScript will generate the tables here. -->
+        </div>
+    </section>
+
+    <section id="table-details">
+        <h2>Table Details</h2>
+        <p>Select a table to inspect its details.</p>
+        <div id="details-content"></div>
+        <button id="add-to-cart" disabled>Add to Cart</button>
+    </section>
+
+    <section id="cart-section">
+        <h2>Your Cart</h2>
+        <div id="cart-items"></div>
+        <p>Total: <span id="cart-total">0.00 AZN</span></p>
+    </section>
+</main>
+
+</body> 
 </html>
