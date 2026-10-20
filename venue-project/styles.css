@@ -1,1 +1,110 @@
+*{
+    box-sizing: border-box;
+}
 
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f3f5f7;
+    color: #222;
+}
+
+
+header{
+    background-color: #263746;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+header h1{
+    margin: 0 0 8px;
+}
+
+header p{
+    margin: 0;
+}
+
+
+main{
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+section{
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+#venue-section{
+    grid-column: 1 / -1;
+}
+
+
+#navigation-controls{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+button{
+    padding: 10px 14px;
+    border: none;
+    border-radius: 5px;
+    background-color: #315b78;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover:not(:disabled){
+    background-color: #23445c;
+}
+
+button:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+}
+
+
+#venue-map{
+    min-height: 300px;
+    padding: 20px;
+    border: 2px dashed #aab5be;
+    border-radius: 8px;
+    background-color: #f8fafb;
+}
+
+
+#table-details{
+    grid-column: 1;
+}
+
+
+#cart-section{
+    grid-column: 2;
+}
+
+
+@media (max-width: 700px){
+    main {
+        grid-template-columns: 1fr;
+        padding: 12px;
+    }
+
+    #venue-section,
+    #table-details,
+    #cart-section{
+        grid-column: 1;
+    }
+
+    section{
+        padding: 14px;
+    }
+}
