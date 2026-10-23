@@ -1,4 +1,3 @@
-
 const venueMap = document.getElementById("venue-map");
 
 
@@ -55,8 +54,8 @@ tables.forEach(function (table) {
 
     
     const positions = {
-        L1: { left: "400px", top: "70px" },
-        L2: { left: "80px", top: "170px" },
+        L1: { left: "450px", top: "70px" },
+        L2: { left: "240px", top: "240px" },
 
         R1: { left: "470px", top: "300px" },
         R2: { left: "610px", top: "300px" },
@@ -70,7 +69,7 @@ tables.forEach(function (table) {
         R8: { left: "610px", top: "540px" },
         R9: { left: "750px", top: "540px" },
 
-        S1: { left: "850px", top: "590px" },
+        S1: { left: "750px", top: "710px" },
         S2: { left: "950px", top: "650px" },
         S3: { left: "850px", top: "680px" }
     };
