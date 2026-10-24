@@ -1,4 +1,4 @@
-*{
+* {
     box-sizing: border-box;
 }
 
@@ -9,24 +9,24 @@ body {
     color: #222;
 }
 
-
-header{
+/* Header */
+header {
     background-color: #263746;
     color: white;
     text-align: center;
     padding: 20px;
 }
 
-header h1{
+header h1 {
     margin: 0 0 8px;
 }
 
-header p{
+header p {
     margin: 0;
 }
 
-
-main{
+/* Main page layout */
+main {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 20px;
@@ -35,26 +35,26 @@ main{
     margin: 0 auto;
 }
 
-section{
+section {
     background-color: white;
     padding: 20px;
     border-radius: 8px;
     border: 1px solid #ddd;
 }
 
-#venue-section{
+#venue-section {
     grid-column: 1 / -1;
 }
 
-
-#navigation-controls{
+/* Navigation controls */
+#navigation-controls {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     margin-bottom: 20px;
 }
 
-button{
+button {
     padding: 10px 14px;
     border: none;
     border-radius: 5px;
@@ -63,7 +63,7 @@ button{
     cursor: pointer;
 }
 
-button:hover:not(:disabled){
+button:hover:not(:disabled) {
     background-color: #23445c;
 }
 
@@ -72,61 +72,33 @@ button:disabled {
     cursor: not-allowed;
 }
 
-
-#venue-map{
-    min-height: 300px;
+/* Venue map container */
+#venue-map {
+    overflow: auto;
+    min-height: 820px;
     padding: 20px;
     border: 2px dashed #aab5be;
     border-radius: 8px;
     background-color: #f8fafb;
 }
 
-
-#table-details{
-    grid-column: 1;
-}
-
-
-#cart-section{
-    grid-column: 2;
-}
-
-
-@media (max-width: 700px){
-    main {
-        grid-template-columns: 1fr;
-        padding: 12px;
-    }
-
-    #venue-section,
-    #table-details,
-    #cart-section{
-        grid-column: 1;
-    }
-}
-
-    section{
-        padding: 14px;
-    }
-
-
-
+/* Cafeteria floor */
 .cafeteria-floor {
     position: relative;
     width: 1600px;
-    height: 1000px;
+    height: 1200px;
     margin: 0 auto;
     overflow: hidden;
 
     background-color: #e9e0d2;
     background-image:
         linear-gradient(
-            rgba(255, 255, 255, 0.15) 1px,
+            rgba(255, 255, 255, 0.18) 1px,
             transparent 1px
         ),
         linear-gradient(
             90deg,
-            rgba(255, 255, 255, 0.15) 1px,
+            rgba(255, 255, 255, 0.18) 1px,
             transparent 1px
         );
 
@@ -135,7 +107,7 @@ button:disabled {
     border-radius: 8px;
 }
 
-
+/* Tables */
 .table {
     position: absolute;
     display: flex;
@@ -143,232 +115,7 @@ button:disabled {
     justify-content: center;
 }
 
-
-.tabletop {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: linear-gradient(135deg, #c9965d, #a9713f);
-    color: #fffaf0;
-
-    font-weight: bold;
-    border: 3px solid #80542f;
-    box-shadow: 0 4px 7px rgba(50, 35, 20, 0.25);
-
-    position: absolute;
-    z-index: 1;
-}
-
-
-.table.long {
-    width: 440px;
-    height: 220px;
-}
-
-.table.long .tabletop {
-    width: 340px;
-    height: 100px;
-    border-radius: 5px;
-}
-
-.table.long.vertical {
-    width: 220px;
-    height: 440px;
-}
-
-.table.long.vertical .tabletop {
-    width: 100px;
-    height: 340px;
-}
-
-.chair {
-    position: absolute;
-    width: 25px;
-    height: 25px;
-
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: #a94e45;
-    color: white;
-    border: 2px solid #77342e;
-    border-radius: 5px;
-
-    font-size: 9px;
-    z-index: 2;
-    cursor: pointer;
-}
-
-
-.table.long:not(.vertical) .seat-top {
-    top: 15px;
-}
-
-.table.long:not(.vertical) .seat-bottom {
-    bottom: 15px;
-}
-
-.table.long:not(.vertical) .seat-left {
-    left: 25px;
-}
-
-.table.long:not(.vertical) .seat-right {
-    right: 25px;
-}
-
-.table.long:not(.vertical) .seat-top,
-.table.long:not(.vertical) .seat-bottom {
-    transform: translateX(-50%);
-}
-
-.table.long:not(.vertical) .seat-left,
-.table.long:not(.vertical) .seat-right {
-    transform: translateY(-50%);
-}
-
-
-.table.long.vertical .seat-left {
-    left: 15px;
-}
-
-.table.long.vertical .seat-right {
-    right: 15px;
-}
-
-.table.long.vertical .seat-top {
-    top: 25px;
-}
-
-.table.long.vertical .seat-bottom {
-    bottom: 25px;
-}
-
-.table.long.vertical .seat-left,
-.table.long.vertical .seat-right {
-    transform: translateY(-50%);
-}
-
-.table.long.vertical .seat-top,
-.table.long.vertical .seat-bottom {
-    transform: translateX(-50%);
-}
-
-
-.table.round {
-    width: 100px;
-    height: 100px;
-}
-
-.table.round .tabletop {
-    width: 62px;
-    height: 62px;
-    border-radius: 50%;
-}
-
-.table.round .chair {
-    border-radius: 50%;
-}
-
-.table.round .seat-1 {
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.table.round .seat-2 {
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.table.round .seat-3 {
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.table.round .seat-4 {
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-
-.table.small {
-    width: 110px;
-    height: 75px;
-}
-
-.table.small .tabletop {
-    width: 76px;
-    height: 48px;
-    border-radius: 5px;
-}
-
-.table.small .seat-1 {
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.table.small .seat-2 {
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-
-.chair:hover {
-    background-color: #d47a54;
-    transform: scale(1.08);
-}
-
-.table.round .chair:hover,
-.table.small .chair:hover {
-    z-index: 3;
-}
-    
-
-
-
-
-
-#venue-map {
-    overflow: auto;
-    min-height: 820px;
-    padding: 20px;
-}
-
-
-.cafeteria-floor {
-    position: relative;
-    width: 1200px;
-    height: 800px;
-    margin: 0 auto;
-    overflow: hidden;
-
-    background-color: #e9e0d2;
-    background-image:
-        linear-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.18) 1px, transparent 1px);
-
-    background-size: 40px 40px;
-    border: 12px solid #827566;
-    border-radius: 8px;
-}
-
-
-.table {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-
+/* Table surface */
 .tabletop {
     position: absolute;
     z-index: 1;
@@ -385,7 +132,7 @@ button:disabled {
     box-shadow: 0 4px 7px rgba(50, 35, 20, 0.25);
 }
 
-
+/* Horizontal long table */
 .table.long:not(.vertical) {
     width: 440px;
     height: 220px;
@@ -397,7 +144,7 @@ button:disabled {
     border-radius: 5px;
 }
 
-
+/* Vertical long table */
 .table.long.vertical {
     width: 220px;
     height: 440px;
@@ -409,7 +156,24 @@ button:disabled {
     border-radius: 5px;
 }
 
-/* stullar */
+/* /////////////////////////////////////////////////////////*/
+
+
+/* Vertical mid table */
+.table.mid.vertical {
+    width: 120px;
+    height: 240px;
+}
+
+.table.mid.vertical .tabletop {
+    width: 120px;
+    height: 140px;
+    border-radius: 5px;
+}
+
+/* //////////////////////////////////////////////// */
+
+/* Chairs */
 .chair {
     position: absolute;
     z-index: 2;
@@ -422,7 +186,7 @@ button:disabled {
     align-items: center;
     justify-content: center;
 
-    background: #a94e45;
+    background-color: #a94e45;
     color: white;
     border: 2px solid #77342e;
     border-radius: 5px;
@@ -431,7 +195,7 @@ button:disabled {
     cursor: pointer;
 }
 
-
+/* Horizontal long-table chairs */
 .table.long:not(.vertical) .seat-top,
 .table.long:not(.vertical) .seat-bottom {
     left: calc(50% - 5px);
@@ -445,7 +209,6 @@ button:disabled {
     bottom: 0;
 }
 
-
 .table.long:not(.vertical) .seat-left {
     left: 0;
     top: 50%;
@@ -458,7 +221,7 @@ button:disabled {
     transform: translateY(-50%);
 }
 
-
+/* Vertical long-table chairs */
 .table.long.vertical .seat-left,
 .table.long.vertical .seat-right {
     top: calc(50% - 5px);
@@ -472,7 +235,6 @@ button:disabled {
     right: 0;
 }
 
-
 .table.long.vertical .seat-top {
     top: 0;
     left: 50%;
@@ -485,7 +247,7 @@ button:disabled {
     transform: translateX(-50%);
 }
 
-
+/* Round tables */
 .table.round {
     width: 100px;
     height: 100px;
@@ -525,7 +287,7 @@ button:disabled {
     transform: translateY(-50%);
 }
 
-
+/* Separate two-seat tables */
 .table.small {
     width: 110px;
     height: 75px;
@@ -549,6 +311,75 @@ button:disabled {
     transform: translateY(-50%);
 }
 
+/* Chair hover */
 .chair:hover {
     background-color: #d47a54;
+}
+
+/* Details and cart layout */
+#table-details {
+    grid-column: 1;
+}
+
+#cart-section {
+    grid-column: 2;
+}
+
+/* Responsive layout */
+@media (max-width: 700px) {
+    main {
+        grid-template-columns: 1fr;
+        padding: 12px;
+    }
+
+    #venue-section,
+    #table-details,
+    #cart-section {
+        grid-column: 1;
+    }
+
+    section {
+        padding: 14px;
+    }
+}
+
+
+/* Divan layout burdan baslayir */
+
+
+.sofa {
+position: absolute;
+width: 180px;
+height: 75px;
+box-sizing: border-box;
+z-index: 2;
+}
+
+/* Divanin arxa hissesi */
+
+.sofa-back {
+position: absolute;
+left: 0;
+top: 0;
+width: 180px;
+height: 20px;
+background: #594333;
+border: 3px solid #463326;
+border-radius: 8px;
+box-sizing: border-box;
+}
+
+/* Divanin oturacaq hissesi */
+
+.sofa-cushion {
+position: absolute;
+left: 5px;
+top: 20px;
+width: 170px;
+height: 48px;
+background: #a88a70;
+border: 3px solid #594333;
+border-radius: 8px;
+box-sizing: border-box;
+box-shadow: inset 0 0 0 3px #c5a88d;
 }
