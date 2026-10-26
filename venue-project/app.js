@@ -1,5 +1,109 @@
 const venueMap = document.getElementById("venue-map");
 
+///           cart
+const selectedSeats = new Map();
+const cart = new Map();
+
+// Temporary price per seat in AZN
+const SEAT_PRICE = 2.00;
+
+const cartItems = document.getElementById("cart-items");
+const cartTotal = document.getElementById("cart-total");
+const addToCartButton = document.getElementById("add-to-cart");
+const detailsContent = document.getElementById("details-content");
+
+// Current item selected for inspection
+let currentSelection = null;
+
+// Select or deselect a seat
+function toggleSeatSelection(seatId, seatElement, description) {
+    if (selectedSeats.has(seatId)) {
+        selectedSeats.delete(seatId);
+        seatElement.classList.remove("selected");
+    } else {
+        selectedSeats.set(seatId, {
+            id: seatId,
+            description: description,
+            element: seatElement
+        });
+
+        seatElement.classList.add("selected");
+    }
+
+    currentSelection = selectedSeats.size > 0;
+
+    detailsContent.textContent = selectedSeats.size > 0
+        ? `${selectedSeats.size} seat(s) selected`
+        : "No seats selected.";
+
+    addToCartButton.disabled = selectedSeats.size === 0;
+}
+
+// Add selected seats to cart
+function addSelectedSeatsToCart() {
+    selectedSeats.forEach(function (seat) {
+        if (!cart.has(seat.id)) {
+            cart.set(seat.id, {
+                id: seat.id,
+                description: seat.description,
+                price: SEAT_PRICE
+            });
+
+            seat.element.classList.remove("selected");
+            seat.element.classList.add("in-cart");
+        }
+    });
+
+    selectedSeats.clear();
+
+    detailsContent.textContent = "Seats added to cart.";
+    addToCartButton.disabled = true;
+
+    renderCart();
+}
+
+// Display cart items and total price
+function renderCart() {
+    cartItems.replaceChildren();
+
+    let total = 0;
+
+    cart.forEach(function (item) {
+        total += item.price;
+
+        const row = document.createElement("div");
+        row.classList.add("cart-item");
+
+        const description = document.createElement("span");
+        description.textContent = `${item.description} — ${item.price.toFixed(2)} AZN`;
+
+        const removeButton = document.createElement("button");
+        removeButton.textContent = "Remove";
+
+        removeButton.addEventListener("click", function () {
+            cart.delete(item.id);
+
+            const seatElement = document.querySelector(
+                `[data-seat-id="${item.id}"]`
+            );
+
+            if (seatElement) {
+                seatElement.classList.remove("in-cart", "selected");
+            }
+
+            renderCart();
+        });
+
+        row.append(description, removeButton);
+        cartItems.appendChild(row);
+    });
+
+    cartTotal.textContent = `${total.toFixed(2)} AZN`;
+}
+
+// Add-to-cart button
+addToCartButton.addEventListener("click", addSelectedSeatsToCart);
+
 
 const cafeteria = document.createElement("div");
 cafeteria.classList.add("cafeteria-floor");
@@ -145,28 +249,62 @@ tables.forEach(function (table) {
         const chair = document.createElement("button");
 
         chair.classList.add("chair");
+        chair.dataset.seatId = `${table.id}-S${i + 1}`;
         chair.textContent = i + 1;
         chair.setAttribute("aria-label", `Table ${table.id}, seat ${i + 1}`);
 
         if (table.type === "long"  || table.type === "mid") {
-            chair.classList.add(
-                `seat-${getSeatPosition(i, table.orientation,table.seats)}`
-            );
+            if (table.type === "long") {
+const side = getSeatPosition(i, table.orientation);
+
+chair.classList.add(`seat-${side}`);
+
+if (table.orientation === "horizontal") {
+    if (side === "top" || side === "bottom") {
+        const seatIndex = side === "top" ? i : i - 10;
+        chair.style.left = `${72.5 + seatIndex * 30}px`;
+    } else {
+    const seatIndex = side === "left" ? i - 20 : i - 22;
+    chair.style.top = `${82.5 + seatIndex * 30}px`;
+    }
+} else {
+    if (side === "left" || side === "right") {
+        const seatIndex = side === "left" ? i : i - 10;
+        chair.style.top = `${72.5 + seatIndex * 30}px`;
+    } else {
+    const seatIndex = side === "top" ? i - 20 : i - 22;
+    chair.style.left = `${82.5 + seatIndex * 30}px`;
+    }
+}
+
+
+} else if (table.type === "mid") {
+chair.classList.add(`seat-${getSeatPosition(i, table.orientation)}`);
+} else {
+chair.classList.add(`seat-${i + 1}`);
+}
+
         } else {
             chair.classList.add(`seat-${i + 1}`);
         }
 
         chair.addEventListener("click", function () {
-            if (table.type === "long") {
-                alert(
-                    `Table ${table.id}\nSeat: ${i + 1}\nIndividual seat selection`
-                );
-            } else {
-                alert(
-                    `Table ${table.id}\nCapacity: ${table.seats} people\nWhole table selection`
-                );
-            }
-        });
+    if (table.type === "long") {
+        const seatId = `${table.id}-S${i + 1}`;
+
+        toggleSeatSelection(
+            seatId,
+            chair,
+            `Table ${table.id}, Seat ${i + 1}`
+        );
+    } else {
+        alert(
+            `Table ${table.id}\n` +
+            `Capacity: ${table.seats} people\n` +
+            `Whole table selection`
+        );
+    }
+});
 
         tableElement.appendChild(chair);
     }
@@ -221,6 +359,31 @@ sofaSeat.classList.add("sofa-cushion");
 
 sofaElement.appendChild(sofaBack);
 sofaElement.appendChild(sofaSeat);
+
+//4 seats for each divan
+
+for(let i=1; i<=4; i++){
+    const seat= document.createElement("button");
+    seat.classList.add("sofa-seat");
+    seat.dataset.seatId = `${sofa.id}-S${i}`;
+    seat.textContent = i;
+    seat.dataset.sofaId = sofa.id;
+    seat.dataset.seatNumber = i;
+
+    seat.setAttribute("aria-label", `Sofa ${sofa.id}, seat ${i}`);
+
+    seat.addEventListener("click", function () {
+    const seatId = `${sofa.id}-S${i}`;
+
+    toggleSeatSelection(
+        seatId,
+        seat,
+        `Sofa ${sofa.id}, Seat ${i}`
+    );
+});
+
+    sofaElement.appendChild(seat);
+}
 
 cafeteria.appendChild(sofaElement);
 
