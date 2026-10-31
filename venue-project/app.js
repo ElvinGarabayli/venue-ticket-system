@@ -4,15 +4,30 @@ const venueMap = document.getElementById("venue-map");
 const selectedSeats = new Map();
 const cart = new Map();
 
-// Temporary price per seat in AZN
-const SEAT_PRICE = 2.00;
+// seat prices
+const SEAT_PRICES = {
+long: 5.00,
+sofa: 10.00,
+round: 8.00,
+small: 6.50
+};
+
+function getSeatPrice(seatId) {
+if (seatId.startsWith("L")) return SEAT_PRICES.long;
+if (seatId.startsWith("D")) return SEAT_PRICES.sofa;
+if (seatId.startsWith("R")) return SEAT_PRICES.round;
+if (seatId.startsWith("S")) return SEAT_PRICES.small;
+
+return 0;
+
+}
+
 
 const cartItems = document.getElementById("cart-items");
 const cartTotal = document.getElementById("cart-total");
 const addToCartButton = document.getElementById("add-to-cart");
 const detailsContent = document.getElementById("details-content");
 
-// Current item selected for inspection
 let currentSelection = null;
 
 // Select or deselect a seat
@@ -41,26 +56,31 @@ function toggleSeatSelection(seatId, seatElement, description) {
 
 // Add selected seats to cart
 function addSelectedSeatsToCart() {
-    selectedSeats.forEach(function (seat) {
-        if (!cart.has(seat.id)) {
-            cart.set(seat.id, {
-                id: seat.id,
-                description: seat.description,
-                price: SEAT_PRICE
-            });
+selectedSeats.forEach(function (item) {
+if (!cart.has(item.id)) {
+cart.set(item.id, {
+id: item.id,
+description: item.description,
+price: item.price ?? getSeatPrice(item.id),
+isTable: item.isTable ?? false
+});
 
-            seat.element.classList.remove("selected");
-            seat.element.classList.add("in-cart");
-        }
-    });
 
-    selectedSeats.clear();
+        item.element.classList.remove("selected");
+        item.element.classList.add("in-cart");
+    }
+});
 
-    detailsContent.textContent = "Seats added to cart.";
-    addToCartButton.disabled = true;
+selectedSeats.clear();
 
-    renderCart();
+detailsContent.textContent = "Added to cart.";
+addToCartButton.disabled = true;
+
+renderCart();
+
+
 }
+
 
 // Display cart items and total price
 function renderCart() {
@@ -88,8 +108,18 @@ function renderCart() {
             );
 
             if (seatElement) {
-                seatElement.classList.remove("in-cart", "selected");
-            }
+    seatElement.classList.remove("in-cart", "selected");
+}
+
+if (item.isTable) {
+    const tableElement = document.querySelector(
+        `[data-table-id="${item.id}"]`
+    );
+
+    if (tableElement) {
+        tableElement.classList.remove("in-cart", "selected");
+    }
+}
 
             renderCart();
         });
@@ -255,27 +285,27 @@ tables.forEach(function (table) {
 
         if (table.type === "long"  || table.type === "mid") {
             if (table.type === "long") {
-const side = getSeatPosition(i, table.orientation);
+        const side = getSeatPosition(i, table.orientation);
 
-chair.classList.add(`seat-${side}`);
+        chair.classList.add(`seat-${side}`);
 
-if (table.orientation === "horizontal") {
-    if (side === "top" || side === "bottom") {
+        if (table.orientation === "horizontal") {
+        if (side === "top" || side === "bottom") {
         const seatIndex = side === "top" ? i : i - 10;
         chair.style.left = `${72.5 + seatIndex * 30}px`;
+        } else {
+        const seatIndex = side === "left" ? i - 20 : i - 22;
+        chair.style.top = `${82.5 + seatIndex * 30}px`;
+        }
     } else {
-    const seatIndex = side === "left" ? i - 20 : i - 22;
-    chair.style.top = `${82.5 + seatIndex * 30}px`;
-    }
-} else {
-    if (side === "left" || side === "right") {
+        if (side === "left" || side === "right") {
         const seatIndex = side === "left" ? i : i - 10;
         chair.style.top = `${72.5 + seatIndex * 30}px`;
-    } else {
-    const seatIndex = side === "top" ? i - 20 : i - 22;
-    chair.style.left = `${82.5 + seatIndex * 30}px`;
+        } else {
+        const seatIndex = side === "top" ? i - 20 : i - 22;
+        chair.style.left = `${82.5 + seatIndex * 30}px`;
+        }
     }
-}
 
 
 } else if (table.type === "mid") {
@@ -289,22 +319,60 @@ chair.classList.add(`seat-${i + 1}`);
         }
 
         chair.addEventListener("click", function () {
-    if (table.type === "long") {
-        const seatId = `${table.id}-S${i + 1}`;
+if (table.type === "long") {
+const seatId = `${table.id}-S${i + 1}`;
 
-        toggleSeatSelection(
-            seatId,
-            chair,
-            `Table ${table.id}, Seat ${i + 1}`
-        );
-    } else {
-        alert(
-            `Table ${table.id}\n` +
-            `Capacity: ${table.seats} people\n` +
-            `Whole table selection`
-        );
+
+    toggleSeatSelection(
+        seatId,
+        chair,
+        `Table ${table.id}, Seat ${i + 1}`
+    );
+
+
+} else if (table.type === "round" || table.type === "small") {
+    const tableId = table.id;
+
+    // If the table is already in the cart, do nothing
+    if (cart.has(tableId)) {
+        return;
     }
+
+    // If already selected, cancel the selection
+    if (selectedSeats.has(tableId)) {
+        selectedSeats.delete(tableId);
+        tableElement.classList.remove("selected");
+    } else {
+        // Select the whole table.
+        selectedSeats.set(tableId, {
+            id: tableId,
+            description: `Table ${tableId} (whole table)`,
+            element: tableElement,
+            price: SEAT_PRICES[table.type],
+            isTable: true
+        });
+
+        tableElement.classList.add("selected");
+    }
+
+    detailsContent.textContent = selectedSeats.size > 0
+        ? `${selectedSeats.size} item(s) selected`
+        : "No items selected.";
+
+    addToCartButton.disabled = selectedSeats.size === 0;
+
+}else {
+    alert(
+        `Table ${table.id}\n` +
+        `Capacity: ${table.seats} people\n` +
+        `Whole table selection`
+    );
+}
+
+
 });
+
+
 
         tableElement.appendChild(chair);
     }
@@ -406,4 +474,75 @@ function getSeatPosition(index, orientation) {
     if (index === 20 || index === 21) return "top";
     return "bottom";
 }
+
+
+
+// Map navigation controls zoom in out zad
+const zoomInButton = document.getElementById("zoom-in");
+const zoomOutButton = document.getElementById("zoom-out");
+const moveUpButton = document.getElementById("move-up");
+const moveDownButton = document.getElementById("move-down");
+const moveLeftButton = document.getElementById("move-left");
+const moveRightButton = document.getElementById("move-right");
+const resetViewButton = document.getElementById("reset-view");
+
+let mapZoom = 1;
+
+const zoomStep = 0.1;
+const moveStep = 100;
+const minZoom = 0.5;
+const maxZoom = 1.5;
+
+// Apply zoom to the cafeteria floor
+function updateZoom() {
+    cafeteria.style.transform = `scale(${mapZoom})`;
+    cafeteria.style.transformOrigin = "top left";
+    cafeteria.style.margin = "0";
+}
+
+// Zoom in
+zoomInButton.addEventListener("click", function () {
+    if (mapZoom < maxZoom) {
+        mapZoom = Math.min(maxZoom, mapZoom + zoomStep);
+        updateZoom();
+    }
+});
+
+// Zoom out
+zoomOutButton.addEventListener("click", function () {
+    if (mapZoom > minZoom) {
+        mapZoom = Math.max(minZoom, mapZoom - zoomStep);
+        updateZoom();
+    }
+});
+
+// Move map up
+moveUpButton.addEventListener("click", function () {
+    venueMap.scrollTop -= moveStep;
+});
+
+// Move map down
+moveDownButton.addEventListener("click", function () {
+    venueMap.scrollTop += moveStep;
+});
+
+// Move map left
+moveLeftButton.addEventListener("click", function () {
+    venueMap.scrollLeft -= moveStep;
+});
+
+// Move map right
+moveRightButton.addEventListener("click", function () {
+    venueMap.scrollLeft += moveStep;
+});
+
+// Reset map view
+resetViewButton.addEventListener("click", function () {
+    mapZoom = 1;
+    updateZoom();
+
+    venueMap.scrollTop = 0;
+    venueMap.scrollLeft = 0;
+});
+
 
