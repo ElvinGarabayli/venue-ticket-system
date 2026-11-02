@@ -30,8 +30,50 @@ const detailsContent = document.getElementById("details-content");
 
 let currentSelection = null;
 
+
+//adding info
+
+function updateSelectionDetails() {
+    detailsContent.replaceChildren();
+
+    if (selectedSeats.size === 0) {
+        detailsContent.textContent = "No seats selected.";
+        addToCartButton.disabled = true;
+        return;
+    }
+
+    let total = 0;
+
+    selectedSeats.forEach(function (item) {
+        const price = item.price ?? getSeatPrice(item.id);
+        total += price;
+
+        const row = document.createElement("p");
+        row.textContent =
+            `${item.description} — ${price.toFixed(2)} AZN`;
+
+        detailsContent.appendChild(row);
+    });
+
+    const totalElement = document.createElement("p");
+    totalElement.textContent =
+        `Selected total: ${total.toFixed(2)} AZN`;
+
+    detailsContent.appendChild(totalElement);
+
+    addToCartButton.disabled = false;
+}
+
+
+
 // Select or deselect a seat
 function toggleSeatSelection(seatId, seatElement, description) {
+
+    if (cart.has(seatId)) {
+        alert("This seat cannot be chosen at the moment. Please, choose another seat.");
+        return;
+  }
+
     if (selectedSeats.has(seatId)) {
         selectedSeats.delete(seatId);
         seatElement.classList.remove("selected");
@@ -47,11 +89,7 @@ function toggleSeatSelection(seatId, seatElement, description) {
 
     currentSelection = selectedSeats.size > 0;
 
-    detailsContent.textContent = selectedSeats.size > 0
-        ? `${selectedSeats.size} seat(s) selected`
-        : "No seats selected.";
-
-    addToCartButton.disabled = selectedSeats.size === 0;
+updateSelectionDetails();
 }
 
 // Add selected seats to cart
@@ -73,12 +111,20 @@ isTable: item.isTable ?? false
 
 selectedSeats.clear();
 
-detailsContent.textContent = "Added to cart.";
-addToCartButton.disabled = true;
+updateSelectionDetails();
 
+saveCart();
 renderCart();
 
 
+}
+
+// Save cart to localStorage
+function saveCart() {
+    localStorage.setItem(
+        "cafeteriaCart",
+        JSON.stringify(Array.from(cart.values()))
+    );
 }
 
 
@@ -102,6 +148,7 @@ function renderCart() {
 
         removeButton.addEventListener("click", function () {
             cart.delete(item.id);
+            saveCart();
 
             const seatElement = document.querySelector(
                 `[data-seat-id="${item.id}"]`
@@ -335,6 +382,7 @@ const seatId = `${table.id}-S${i + 1}`;
 
     // If the table is already in the cart, do nothing
     if (cart.has(tableId)) {
+        alert("This seat cannot be chosen at the moment. Please, choose another seat.");
         return;
     }
 
@@ -355,11 +403,7 @@ const seatId = `${table.id}-S${i + 1}`;
         tableElement.classList.add("selected");
     }
 
-    detailsContent.textContent = selectedSeats.size > 0
-        ? `${selectedSeats.size} item(s) selected`
-        : "No items selected.";
-
-    addToCartButton.disabled = selectedSeats.size === 0;
+    updateSelectionDetails();
 
 }else {
     alert(
@@ -545,4 +589,46 @@ resetViewButton.addEventListener("click", function () {
     venueMap.scrollLeft = 0;
 });
 
+
+// Restore cart from localStorage
+function restoreCart() {
+    const savedCart = localStorage.getItem("cafeteriaCart");
+
+    if (!savedCart) {
+        return;
+    }
+
+    try {
+        const savedItems = JSON.parse(savedCart);
+
+        savedItems.forEach(function (item) {
+            cart.set(item.id, item);
+
+            if (item.isTable) {
+                const tableElement = document.querySelector(
+                    `[data-table-id="${item.id}"]`
+                );
+
+                if (tableElement) {
+                    tableElement.classList.add("in-cart");
+                }
+            } else {
+                const seatElement = document.querySelector(
+                    `[data-seat-id="${item.id}"]`
+                );
+
+                if (seatElement) {
+                    seatElement.classList.add("in-cart");
+                }
+            }
+        });
+
+        renderCart();
+    } catch (error) {
+        console.error("Could not restore cart:", error);
+    }
+}
+
+// Restore saved data after the venue has been generated
+restoreCart();
 
